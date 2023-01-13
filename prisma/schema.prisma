@@ -5,6 +5,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../src/generated/nestjs-dto"
+  outputToNestJsResourceStructure = "false"
+  exportRelationModifierClasses   = "true"
+  reExport                        = "false"
+  createDtoPrefix                 = "Create"
+  updateDtoPrefix                 = "Update"
+  dtoSuffix                       = "Dto"
+  entityPrefix                    = ""
+  entitySuffix                    = ""
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -14,6 +27,7 @@ model User {
   id String @id @default(uuid())
   email String @unique
   password String
+  profile_picture String?
   verified_at DateTime?
   verification_code String?
   created_at DateTime @default(now())
@@ -32,16 +46,17 @@ model Role{
 
 model Question{
   id String @id @default(uuid())
-  question String
-  sender_ip String?
   user_id String?
+  sender_ip String?
+  image String?
+  question String
   user User? @relation(fields: [user_id], references: [id])
   answer Answer?
 }
 
 model Answer{
   id String @id @default(uuid())
-  answer String
   question_id String? @unique
+  answer String
   question Question? @relation(fields: [question_id], references: [id])
 }
